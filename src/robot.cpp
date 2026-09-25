@@ -3,39 +3,54 @@
 #include "robot.hpp"
 #include "robot_config.hpp"
 #include <cmath>
+#include <vector>
 
 namespace robot {
 namespace {
 #if ROBOT_ENABLE_CHASSIS
 // 编译时拦住未填写、越界或重复的端口，不能仅打开开关就使用占位参数。
 constexpr bool validPorts() {
-    bool used[22]{};
-    for (auto ports : {config::leftMotorPorts, config::rightMotorPorts}) {
-        if (ports.size() == 0) return false;
+    bool used[22]{}; //used检查有没有多个hardware接到一个端口里了
+    for (auto ports : {config::leftMotorPorts, config::rightMotorPorts}) { //左电机列表/右电机列表
+        if (ports.size() == 0) return false; //没有端口
         for (int port : ports) {
             const int physicalPort = port < 0 ? -port : port;
-            if (physicalPort < 1 || physicalPort > 21 || used[physicalPort]) return false;
+            if (physicalPort < 1 || physicalPort > 21 || used[physicalPort]) return false; //如果占用了或者越界了
             used[physicalPort] = true;
         }
     }
+    //static_cast<int> 把不同整数类型同义转换成 int
     for (int port : {static_cast<int>(config::imuPort),
                      static_cast<int>(config::verticalRotationPort),
-                     static_cast<int>(config::horizontalRotationPort)}) {
+                     static_cast<int>(config::horizontalRotationPort)}) { // IMU和Rotation port
         const int physicalPort = port < 0 ? -port : port;
         if (physicalPort < 1 || physicalPort > 21 || used[physicalPort]) return false;
         used[physicalPort] = true;
     }
     return true;
 }
+//static_assert(必须成立的条件, "条件不成立时显示的错误信息");
 static_assert(validPorts(), "Fill in unique real motor, IMU and tracking sensor ports in robot_config.hpp");
-static_assert(config::motorGearset != pros::MotorGearset::invalid,
-              "Configure the real motor cartridge gearset");
+static_assert(config::leftMotorPorts.size() == config::leftMotorGearsets.size() &&
+                  config::rightMotorPorts.size() == config::rightMotorGearsets.size(),
+              "Each motor port must have a matching gearset in the same order");
+constexpr bool validGearsets() {
+    for (auto gearsets : {config::leftMotorGearsets, config::rightMotorGearsets}) {
+        for (auto gearset : gearsets) {
+            if (gearset != pros::MotorGearset::red && gearset != pros::MotorGearset::green &&
+                gearset != pros::MotorGearset::blue) return false;
+        }
+    }
+    return true;
+}
+static_assert(validGearsets(), "Configure a red, green or blue gearset for every motor");
 static_assert(config::trackWidth > 0 && config::driveWheelDiameter > 0 &&
                   config::driveWheelRpm > 0 && config::trackingWheelDiameter > 0,
               "Fill in measured chassis dimensions and wheel RPM in robot_config.hpp");
 
-pros::MotorGroup leftMotors(config::leftMotorPorts, config::motorGearset);
-pros::MotorGroup rightMotors(config::rightMotorPorts, config::motorGearset);
+// 构造时不统一指定齿轮盒；initialize() 中按列表分别配置各电机。
+pros::MotorGroup leftMotors(config::leftMotorPorts);
+pros::MotorGroup rightMotors(config::rightMotorPorts);
 pros::Imu imu(config::imuPort);
 pros::Rotation verticalEnc(config::verticalRotationPort);
 pros::Rotation horizontalEnc(config::horizontalRotationPort);
@@ -59,7 +74,7 @@ lemlib::Chassis chassis(drivetrain, linearController, angularController,
                         sensors, &throttleCurve, &steerCurve);
 bool chassisReady = false;
 
-bool hardwareAvailable() {
+bool hardwareAvailable() { //检查hardware是否齐全和正常
     if (!imu.is_installed() || !verticalEnc.is_installed() || !horizontalEnc.is_installed()) return false;
     for (double velocity : leftMotors.get_actual_velocity_all()) {
         if (!std::isfinite(velocity)) return false;
@@ -140,6 +155,13 @@ void initialize() {
     stop();
     if (!hardwareAvailable()) {
         pros::lcd::set_text(0, "Chassis unavailable: check ports");
+        return;
+    }
+    // set_gearing(vector) 按电机组内的顺序设置每个电机，不改变端口反转。
+    if (leftMotors.set_gearing(std::vector<pros::MotorGearset>(config::leftMotorGearsets)) != 1 ||
+        rightMotors.set_gearing(std::vector<pros::MotorGearset>(config::rightMotorGearsets)) != 1) {
+        pros::lcd::set_text(0, "Motor gearset setup failed");
+        stop();
         return;
     }
     pros::lcd::set_text(0, "Calibrating: keep robot still");
