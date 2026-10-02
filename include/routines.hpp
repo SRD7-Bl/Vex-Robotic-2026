@@ -1,6 +1,4 @@
 #pragma once
 
-namespace routines {
-void autonomous();
-void driver();
-} // namespace routines
+void runAutonomous();
+void runDriver();

@@ -3,11 +3,11 @@
 #include "routines.hpp"
 
 void initialize() {
-    robot::initialize();
+    initializeRobot();
 }
 
 void disabled() {
-    robot::stop();
+    stopRobot();
 }
 
 void competition_initialize() {
@@ -15,13 +15,13 @@ void competition_initialize() {
 }
 
 void autonomous() {
-    robot::stop();
-    routines::autonomous();
-    robot::stop();
+    stopRobot();
+    runAutonomous();
+    stopRobot();
 }
 
 void opcontrol() {
-    robot::stop();
-    routines::driver();
-    robot::stop();
+    stopRobot();
+    runDriver();
+    stopRobot();
 }
