@@ -1,3 +1,4 @@
+//这个文件负责实际对象定义：用配置创建这个电机对象
 #include "main.h"
 #include "robot.hpp"
 #include "robot_config.hpp"
@@ -5,14 +6,28 @@
 
 // TODO：底盘尺寸和轮速仍未填写，先完成配置再运行。
 // 构造时不统一指定齿轮盒；initializeRobot() 中按列表分别配置各电机。
+// 底盘定义
 pros::MotorGroup leftMotors(leftMotorPorts);
 pros::MotorGroup rightMotors(rightMotorPorts);
+
+// IMU定义
 pros::Imu imu(imuPort);
+
+// Rotational Sensor + Odometry定义
 pros::Rotation verticalEnc(verticalRotationPort);
 pros::Rotation horizontalEnc(horizontalRotationPort);
 lemlib::TrackingWheel vertical(&verticalEnc, trackingWheelDiameter, verticalOffset);
 lemlib::TrackingWheel horizontal(&horizontalEnc, trackingWheelDiameter, horizontalOffset);
 
+// Mechanism Motor定义
+pros::Motor LiftMotorLeft(liftMotorLeftPort, MechanismGearset);
+pros::Motor LiftMotorRight(liftMotorRightPort, MechanismGearset);
+pros::Motor IntakeMotorLeft(intakeMotorLeftPort, MechanismGearset);
+pros::Motor IntakeMotorRight(intakeMotorRightPort, MechanismGearset);
+pros::Motor ClampMotor(clampMotorPort, MechanismGearset);
+
+
+//Drivertrain 组装
 lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, trackWidth,
                              driveWheelDiameter, driveWheelRpm, horizontalDrift);
 
@@ -29,10 +44,17 @@ lemlib::ExpoDriveCurve steerCurve(3, 10, 1.019);
 lemlib::Chassis chassis(drivetrain, linearController, angularController,
                         sensors, &throttleCurve, &steerCurve);
 
+
+
 void stopRobot() {
     chassis.cancelAllMotions();
     leftMotors.move(0);
     rightMotors.move(0);
+    IntakeMotorLeft.move(0);
+    IntakeMotorRight.move(0);
+    LiftMotorLeft.move(0);
+    LiftMotorRight.move(0);
+    ClampMotor.move(0);
     // 以后新增机构时，在这里加入机构停止代码。
 }
 
