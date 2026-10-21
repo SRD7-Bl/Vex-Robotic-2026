@@ -14,12 +14,12 @@ inline constexpr std::uint8_t imuPort = 10;
 inline constexpr std::int8_t verticalRotationPort = 16;
 inline constexpr std::int8_t horizontalRotationPort = 3;
 
-//TODO: 这些motor的port尚未确定
-inline constexpr std::int8_t liftMotorLeftPort;
-inline constexpr std::int8_t liftMotorRightPort;
-inline constexpr std::int8_t intakeMotorLeftPort;
-inline constexpr std::int8_t intakeMotorRightPort;
-inline constexpr std::int8_t clampMotorPort;
+inline constexpr std::int8_t liftMotorLeftPort = 14;
+inline constexpr std::int8_t liftMotorRightPort = -20;
+inline constexpr std::int8_t intakeMotorLeftPort = -7;
+inline constexpr std::int8_t intakeMotorRightPort = 6;
+inline constexpr std::int8_t clampMotorPort = -8;
+inline constexpr std::int8_t toggleMotorPort = 15;
 
 
 

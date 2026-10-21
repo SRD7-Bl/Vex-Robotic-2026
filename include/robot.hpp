@@ -10,6 +10,8 @@ extern pros::Motor IntakeMotorRight;
 extern pros::Motor LiftMotorLeft;
 extern pros::Motor LiftMotorRight;
 extern pros::Motor ClampMotor;
+extern pros::Motor ToggleMotor;
+
 
 void initializeRobot();
 void stopRobot();

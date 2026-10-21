@@ -25,7 +25,7 @@ pros::Motor LiftMotorRight(liftMotorRightPort, MechanismGearset);
 pros::Motor IntakeMotorLeft(intakeMotorLeftPort, MechanismGearset);
 pros::Motor IntakeMotorRight(intakeMotorRightPort, MechanismGearset);
 pros::Motor ClampMotor(clampMotorPort, MechanismGearset);
-
+pros::Motor ToggleMotor(toggleMotorPort,MechanismGearset);
 
 //Drivertrain 组装
 lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, trackWidth,
@@ -50,11 +50,14 @@ void stopRobot() {
     chassis.cancelAllMotions();
     leftMotors.move(0);
     rightMotors.move(0);
+    
     IntakeMotorLeft.move(0);
     IntakeMotorRight.move(0);
     LiftMotorLeft.move(0);
     LiftMotorRight.move(0);
     ClampMotor.move(0);
+    ToggleMotor.move(0);
+    
     // 以后新增机构时，在这里加入机构停止代码。
 }
 
