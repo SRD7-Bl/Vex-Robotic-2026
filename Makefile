@@ -9,6 +9,8 @@ CXXEXTS:=cpp c++ cc
 ROOT=.
 FWDIR:=$(ROOT)/firmware
 BINDIR=$(ROOT)/bin
+# For the standalone motor test, change SRCDIR to $(ROOT)/motor-test.
+# SRCDIR=$(ROOT)/motor-test
 SRCDIR=$(ROOT)/src
 INCDIR=$(ROOT)/include
 

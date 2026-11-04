@@ -19,8 +19,7 @@ inline constexpr std::int8_t liftMotorRightPort = -20;
 inline constexpr std::int8_t intakeMotorLeftPort = -7;
 inline constexpr std::int8_t intakeMotorRightPort = 6;
 inline constexpr std::int8_t clampMotorPort = -8;
-inline constexpr std::int8_t toggleMotorPort = 15;
-
+inline constexpr std::int8_t toggleMotorPort = 15; //15
 
 
 // 完成底盘参数配置后才能运行。

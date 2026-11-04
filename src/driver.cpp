@@ -28,8 +28,7 @@ void runDriver() {
     pros::lcd::set_text(1, "Mode: driver (arcade)");
     while (!pros::competition::is_disabled() &&
            !pros::competition::is_autonomous()) {
-        
-        //摇杆
+
         const int forward = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
         const int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
         chassis.arcade(-forward, -turn);
@@ -73,8 +72,6 @@ void runDriver() {
         } else {
             ToggleMotor.move(127);
         }
-
-        
         pros::delay(driverPeriodMs);
     }
     stopRobot();

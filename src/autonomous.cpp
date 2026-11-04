@@ -2,7 +2,12 @@
 #include "robot.hpp"
 #include "routines.hpp"
 
-void runAutonomous() {
+void move(int front,int turn, int sec){
+    chassis.arcade(front, turn);
+    pros::delay(sec);
+    chassis.arcade(0, 0);
+}
+void runAutonomous(){
     pros::lcd::set_text(1, "Autonomous: no routine selected");
     // 完成硬件配置和调参后，把自动动作写在这里。
     // 坐标用英寸，角度用度，超时用毫秒。
@@ -10,4 +15,14 @@ void runAutonomous() {
     // chassis.setPose(0, 0, 0);
     // chassis.moveToPoint(0, 12, 2000, {}, false);
     // chassis.turnToHeading(90, 1500, {}, false);
+    
+    chassis.setPose(0,0,0); 
+    move(127,0,3);
 }
+
+/*
+测试：
+1. 90/45度转角
+2. 抓pin
+
+*/

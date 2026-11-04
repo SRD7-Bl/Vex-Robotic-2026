@@ -1,4 +1,4 @@
-//这个文件负责实际对象定义：用配置创建这个电机对象
+//这个文件负责实际对象定义：创建这个硬件对象以及进行初始化机器人
 #include "main.h"
 #include "robot.hpp"
 #include "robot_config.hpp"
@@ -26,6 +26,8 @@ pros::Motor IntakeMotorLeft(intakeMotorLeftPort, MechanismGearset);
 pros::Motor IntakeMotorRight(intakeMotorRightPort, MechanismGearset);
 pros::Motor ClampMotor(clampMotorPort, MechanismGearset);
 pros::Motor ToggleMotor(toggleMotorPort,MechanismGearset);
+
+
 
 //Drivertrain 组装
 lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, trackWidth,
