@@ -16,22 +16,24 @@ const int LIFTUPSPEED = 127;
 const int LIFTDOWNSPEED = -127;
 
 const int INTAKEINSPEED = 127;
-const int INTAKEOUTSPEED = -127;
+const int INTAKEOUTSPEED = -37;
 
-const int FLIPPINGTIME = 500; // Unit:ms
+const int FLIPPINGTIME = 200; // Unit:ms
 
 bool IsFlipping = false;
 int StartFlipping = 0;
+int intakeState = 0; //0 neutral，1吸入，-1吐出
 
 void runDriver() {
+    IsFlipping = false;
     pros::Controller controller(pros::E_CONTROLLER_MASTER);
     pros::lcd::set_text(1, "Mode: driver (arcade)");
     while (!pros::competition::is_disabled() &&
            !pros::competition::is_autonomous()) {
 
-        const int forward = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
-        const int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
-        chassis.arcade(-forward, -turn);
+        const int turn = controller.get_analog(pros::E_CONTROLLER_ANALOG_RIGHT_X);
+        const int forward = controller.get_analog(pros::E_CONTROLLER_ANALOG_LEFT_Y);
+        chassis.arcade(forward, turn);
 
         // 后续的 intake / lift 等机构手柄控制放在这里，不要加入阻塞等待。
         // R1/R2
@@ -47,19 +49,74 @@ void runDriver() {
         }
 
         // L1/L2
+        /*
         if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
             IntakeMotorLeft.move(INTAKEINSPEED);
             IntakeMotorRight.move(INTAKEINSPEED);
-            ClampMotor.move(127);
+            ClampMotor.move(57);
         } else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
             IntakeMotorLeft.move(INTAKEOUTSPEED);
             IntakeMotorRight.move(INTAKEOUTSPEED);
-            ClampMotor.move(127); //Clamp负责张开爪子，所以take in和take out都需要127
+            ClampMotor.move(57); //Clamp负责张开爪子，所以take in和take out都需要127
         } else {
+            IntakeMotorLeft.brake();
+            IntakeMotorRight.brake();
+            ClampMotor.move(0);
+        }
+        */
+
+        
+       if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L1)){
+            if(intakeState == 0){
+                intakeState = 1;
+            } else {
+                intakeState = 0;
+            }
+       }
+       if(controller.get_digital_new_press(pros::E_CONTROLLER_DIGITAL_L2)){
+            if(intakeState == 0){
+                intakeState = -1;
+            } else {
+                intakeState = 0;
+            }
+       }
+       if(intakeState == 0){
             IntakeMotorLeft.move(0);
             IntakeMotorRight.move(0);
             ClampMotor.move(0);
+       } else if (intakeState == 1){
+            IntakeMotorLeft.move(INTAKEINSPEED);
+            IntakeMotorRight.move(INTAKEINSPEED);
+            ClampMotor.move(0);
+       } else {
+            IntakeMotorLeft.move(INTAKEOUTSPEED);
+            IntakeMotorRight.move(INTAKEOUTSPEED);
+            ClampMotor.move(-127);
+       }
+        
+        
+        /*
+
+        bool Clampstate = false;
+        bool intakestate = false;
+        if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L1)){
+            intakestate = !intakestate;
+        } else if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_L2)){
+            Clampstate = !Clampstate;
         }
+        if(Clampstate == 1){
+            ClampMotor.move(-127);
+        } else {
+            ClampMotor.move(0);
+        }
+        if(intakestate){
+            IntakeMotorLeft.move(INTAKEINSPEED);
+            IntakeMotorRight.move(INTAKEINSPEED);
+        } else {
+            IntakeMotorLeft.move(0);
+            IntakeMotorRight.move(0);
+        }
+        */
 
         // X
         if(controller.get_digital(pros::E_CONTROLLER_DIGITAL_X) && !IsFlipping){
@@ -68,9 +125,11 @@ void runDriver() {
         }
         if(IsFlipping && pros::millis() - StartFlipping >= FLIPPINGTIME){
             IsFlipping = false;
-            ToggleMotor.move(0);
-        } else {
+        }
+        if(IsFlipping){
             ToggleMotor.move(127);
+        } else {
+            ToggleMotor.move(0);
         }
         pros::delay(driverPeriodMs);
     }

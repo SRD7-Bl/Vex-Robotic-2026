@@ -71,6 +71,11 @@ void initializeRobot() {
     stopRobot();
     chassis.calibrate();
 
+    //LiftMotorLeft.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    //LiftMotorRight.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    //IntakeMotorLeft.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+    //IntakeMotorRight.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
+
     static pros::Task screenTask([] {
         while (true) {
             const auto pose = chassis.getPose();
