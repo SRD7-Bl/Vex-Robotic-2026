@@ -2,12 +2,12 @@
 #include "robot.hpp"
 #include "routines.hpp"
 
-const int FLIPTIME = 850; //ms
+const int FLIPTIME = 700; //ms
 const int LIFTUPSPEED = 127;
 const int LIFTDOWNSPEED = -127;
 
 const int INTAKEINSPEED = 127;
-const int INTAKEOUTSPEED = -90;
+const int INTAKEOUTSPEED = -20;
 
 void stopMechanism(){
     IntakeMotorLeft.move(0);
@@ -46,39 +46,31 @@ void liftDown(int T){
     }
     stopMechanism();
 }
-void score(){
+void score(int T){
     
     stopMechanism();
-    liftDown(200);
+    //liftDown(200);
 
-    IntakeMotorLeft.move(INTAKEINSPEED);
-    IntakeMotorRight.move(INTAKEINSPEED);
+    //IntakeMotorLeft.move(INTAKEINSPEED);
+    //IntakeMotorRight.move(INTAKEINSPEED);
 
-    pros::delay(750);
+    pros::delay(250);
 
     stopMechanism();
-    liftUp(500);
+    liftUp(T);
 
-    move(80,0,500);
+    move(60,0,350);
+    liftDown(300);
 
-    ClampMotor.move(-57);
-    liftDown(500);
-
-    pros::delay(750);
-
-    move(-80,0,500);
-    stopMechanism();
-}
-void getPin(){
-    stopMechanism();
-    int startintake = pros::millis();
-    while(pros::millis() - startintake < 1000){
-        IntakeMotorLeft.move(INTAKEINSPEED);
-        IntakeMotorRight.move(INTAKEINSPEED);
-        ClampMotor.move(-127);
-    }
+    ClampMotor.move(-127);
+    LiftMotorLeft.move(LIFTDOWNSPEED);
+    LiftMotorRight.move(LIFTDOWNSPEED);
+    pros::delay(50);
+    
+    move(-80,0,100);
     stopMechanism();
 }
+
 
 void runAutonomous(){
     pros::lcd::set_text(1, "Autonomous: no routine selected");
@@ -91,29 +83,130 @@ void runAutonomous(){
     
     
     chassis.setPose(0,0,0); 
+    move(100,0,50);
+    liftUp(30);
 
-    chassis.turnToHeading(90, 3000, {.maxSpeed = 60}, false);
+    pros::delay(100);
+
+    //chassis.moveToPoint(20,0, 4000, {.maxSpeed = 60}, false);
 
     //score();
-    /*
+    
     IntakeMotorLeft.move(INTAKEINSPEED);
     IntakeMotorRight.move(INTAKEINSPEED);
     pros::delay(100);
     stopMechanism();
 
     toggleFlip();
-    pros::delay(100);
+    pros::delay(50);
 
-    move(127,0,180);
-    pros::delay(100);
+    move(127,0,195);
+    pros::delay(75);
 
     chassis.turnToHeading(90,1500,{}, false);
+    pros::delay(75);
+
+    move(120,0,200);
+    pros::delay(75);
+    
+    score(75);
+    pros::delay(75);
+    
+    move(-127,0,160);
+    pros::delay(150);
+
+    chassis.turnToHeading(45,1500,{}, false);
+    pros::delay(75);
+
+    ClampMotor.move(127);
+    LiftMotorLeft.move(LIFTDOWNSPEED);
+    LiftMotorRight.move(LIFTDOWNSPEED);
+    IntakeMotorLeft.move(INTAKEINSPEED);
+    IntakeMotorRight.move(INTAKEINSPEED);
+    pros::delay(200);
+
+    move(120,0,340);
+    pros::delay(50);
+
+    move(61,0,1000);
+    pros::delay(50);
+
+    //move(127,0,100);
+    //pros::delay(50);
+
+    liftUp(100);
+    chassis.turnToHeading(180,1500,{}, false);
+    pros::delay(50);
+
+    move(100,0,200);
+    pros::delay(50);
+    
+    score(125);
+    pros::delay(50);
+
+    move(-127,0,160);
+    pros::delay(200);
+
+    chassis.turnToHeading(135,1500,{}, false);
+    pros::delay(50);
+    
+    ClampMotor.move(127);
+    LiftMotorLeft.move(LIFTDOWNSPEED);
+    LiftMotorRight.move(LIFTDOWNSPEED);
+    IntakeMotorLeft.move(INTAKEINSPEED);
+    IntakeMotorRight.move(INTAKEINSPEED);
+    pros::delay(200);
+
+    move(120,0,300);
     pros::delay(100);
 
-    move(127,0,165);
+    move(57,0,1000);
+    pros::delay(50);
+
+    liftUp(200);
+    chassis.turnToHeading(-90,1500,{}, false);
+    pros::delay(75);
+
+    move(100,0,200);
+    pros::delay(100);
+    
+    score(170);
+    pros::delay(100);
+    
+
+
+
+
+    /*
+    chassis.turnToHeading(0,1500,{}, false);
+
+    ClampMotor.move(127);
+    LiftMotorLeft.move(LIFTDOWNSPEED);
+    LiftMotorRight.move(LIFTDOWNSPEED);
+    IntakeMotorLeft.move(INTAKEINSPEED);
+    IntakeMotorRight.move(INTAKEINSPEED);
+    pros::delay(250);
+
+    move(107,0,200);
+    pros::delay(200);
+
+    move(57,0,530);
+    pros::delay(150);
+
+    LiftMotorLeft.move(LIFTUPSPEED);
+    LiftMotorRight.move(LIFTUPSPEED);
+    move(-107,0,250);
+    stopMechanism();
+    pros::delay(250);
+
+    chassis.turnToHeading(-90,1500,{}, false);
+    pros::delay(100);
+
+    move(100,0,200);
     pros::delay(100);
     
     score();
+    pros::delay(100);
     */
 
     /*
