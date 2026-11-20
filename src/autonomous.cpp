@@ -59,15 +59,18 @@ void score(int T){
     stopMechanism();
     liftUp(T);
 
-    move(60,0,350);
+    move(60,0,330);
     liftDown(300);
 
     ClampMotor.move(-127);
     LiftMotorLeft.move(LIFTDOWNSPEED);
     LiftMotorRight.move(LIFTDOWNSPEED);
-    pros::delay(50);
+    pros::delay(500);
+
+    //liftUp(100);
+    //pros::delay(100);
     
-    move(-80,0,100);
+    move(-80,0,120);
     stopMechanism();
 }
 
@@ -99,19 +102,22 @@ void runAutonomous(){
 
     toggleFlip();
     pros::delay(50);
-
+    
+    
     move(127,0,195);
     pros::delay(75);
 
     chassis.turnToHeading(90,1500,{}, false);
     pros::delay(75);
 
-    move(120,0,200);
+    move(120,0,180);
     pros::delay(75);
     
     score(75);
     pros::delay(75);
+
     
+    /*
     move(-127,0,160);
     pros::delay(150);
 
@@ -134,8 +140,8 @@ void runAutonomous(){
     //move(127,0,100);
     //pros::delay(50);
 
-    liftUp(100);
     chassis.turnToHeading(180,1500,{}, false);
+    liftUp(200);
     pros::delay(50);
 
     move(100,0,200);
@@ -144,7 +150,7 @@ void runAutonomous(){
     score(125);
     pros::delay(50);
 
-    move(-127,0,160);
+    move(-127,0,180);
     pros::delay(200);
 
     chassis.turnToHeading(135,1500,{}, false);
@@ -162,12 +168,14 @@ void runAutonomous(){
 
     move(57,0,1000);
     pros::delay(50);
+    liftUp(300);
+    pros::delay(75);
 
-    liftUp(200);
+    
     chassis.turnToHeading(-90,1500,{}, false);
     pros::delay(75);
 
-    move(100,0,200);
+    move(100,0,250);
     pros::delay(100);
     
     score(170);
@@ -175,7 +183,7 @@ void runAutonomous(){
     
 
 
-
+    */
 
     /*
     chassis.turnToHeading(0,1500,{}, false);
