@@ -40,6 +40,12 @@ lemlib::ControllerSettings linearController(10, 0, 3, 3, 1, 100, 3, 500, 20);
 lemlib::ControllerSettings angularController(2, 0, 10, 3, 1, 100, 3, 500, 0);
 lemlib::OdomSensors sensors(&vertical, nullptr, &horizontal, nullptr, &imu);
 
+/*
+PID test
+Linear
+
+*/
+
 // 参数顺序：摇杆死区、最小输出、指数增益；沿用去年参考值。
 lemlib::ExpoDriveCurve throttleCurve(3, 10, 1.019);
 lemlib::ExpoDriveCurve steerCurve(3, 10, 1.019);

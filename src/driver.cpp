@@ -2,7 +2,7 @@
 #include "robot.hpp"
 #include "robot_config.hpp"
 #include "routines.hpp"
-
+#include "field_coordinates.hpp"
 /*
 双摇杆操作方式
 左摇杆负责前后，右摇杆负责转向
@@ -26,11 +26,29 @@ int intakeState = 0; //0 neutral，1吸入，-1吐出
 
 void runDriver() {
     IsFlipping = false;
+
     pros::Controller controller(pros::E_CONTROLLER_MASTER);
     constexpr std::uint32_t controllerDisplayPeriodMs = 100;
     std::uint32_t lastControllerDisplayMs = pros::millis() - controllerDisplayPeriodMs;
     bool displayX = true;
     pros::lcd::set_text(1, "Mode: driver (arcade)");
+
+    switch(StartPoint){
+        case 'L':
+            chassis.setPose(leftStartPoint.x, leftStartPoint.y, 90);
+            break;
+        case 'R':
+            chassis.setPose(rightStartPoint.x, rightStartPoint.y, -90);
+            break;
+        case 'U':
+            chassis.setPose(topStartPoint.x, topStartPoint.y, 180);
+            break;
+        case 'B':
+            chassis.setPose(bottomStartPoint.x, bottomStartPoint.y, 0);
+            break;
+    }
+
+
     while (!pros::competition::is_disabled() &&
            !pros::competition::is_autonomous()) {
 

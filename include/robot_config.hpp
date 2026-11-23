@@ -11,8 +11,8 @@
 inline constexpr std::initializer_list<std::int8_t> leftMotorPorts{-17, -18, 19}; // 17 18 -19
 inline constexpr std::initializer_list<std::int8_t> rightMotorPorts{-1, 2, 20};
 inline constexpr std::uint8_t imuPort = 10;
-inline constexpr std::int8_t verticalRotationPort = 16;
-inline constexpr std::int8_t horizontalRotationPort = 3;
+inline constexpr std::int8_t verticalRotationPort = -16;
+inline constexpr std::int8_t horizontalRotationPort = -3;
 
 inline constexpr std::int8_t liftMotorLeftPort = 14;
 inline constexpr std::int8_t liftMotorRightPort = -21;
