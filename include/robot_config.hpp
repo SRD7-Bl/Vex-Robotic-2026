@@ -46,6 +46,7 @@ inline constexpr float horizontalDrift = 2;    // 去年参考值，需要重新
 
 inline constexpr int driverPeriodMs = 10;     // 沿用去年手柄更新周期
 inline constexpr int screenPeriodMs = 50;
+inline constexpr std::uint32_t controllerDisplayPeriodMs = 100; // 每次更新一行
 
 /*
 length 15.2

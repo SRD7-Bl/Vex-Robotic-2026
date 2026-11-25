@@ -10,6 +10,8 @@ const int LIFTDOWNSPEED = -127;
 const int INTAKEINSPEED = 127;
 const int INTAKEOUTSPEED = -20;
 
+const float MARGIN = 7.5f;
+
 char StartPoint = 'R'; // L --left / R --right / U --up / B --bottom
 
 void stopMechanism(){
@@ -50,19 +52,11 @@ void liftDown(int T){
     stopMechanism();
 }
 void score(int T){
-    
-    stopMechanism();
-    //liftDown(200);
-
-    //IntakeMotorLeft.move(INTAKEINSPEED);
-    //IntakeMotorRight.move(INTAKEINSPEED);
-
-    pros::delay(250);
 
     stopMechanism();
     liftUp(T);
 
-    move(60,0,330);
+    //move(60,0,330);
     liftDown(300);
 
     ClampMotor.move(-127);
@@ -70,10 +64,8 @@ void score(int T){
     LiftMotorRight.move(LIFTDOWNSPEED);
     pros::delay(500);
 
-    //liftUp(100);
-    //pros::delay(100);
-    
-    move(-80,0,120);
+    //move(-80,0,120);
+
     stopMechanism();
 }
 
@@ -240,12 +232,39 @@ void CoordinateBased(){
             chassis.setPose(bottomStartPoint.x, bottomStartPoint.y, 0);
             break;
     }
+
+    move(100,0,50);
+    liftUp(30);
+
+    pros::delay(100);
+    
+    IntakeMotorLeft.move(INTAKEINSPEED);
+    IntakeMotorRight.move(INTAKEINSPEED);
+    pros::delay(100);
+    stopMechanism();
+
+    toggleFlip();
+    pros::delay(50);
+
     chassis.moveToPoint(117.3,70.2,1000,{},false);
+    pros::delay(100);
+
+    chassis.turnToHeading(0, 2000, {}, false);
+    pros::delay(100);
+
+    liftUp(100);
+    pros::delay(100);
+
+    chassis.moveToPoint(blueGoalRight.x,blueGoalRight.y - MARGIN,1000,{},false);
+    pros::delay(100);
+
+    score(100);
 }
 
 void PIDTest(){
     chassis.setPose(0, 0, 0);
-    chassis.turnToHeading(90, 3000, {.maxSpeed = 60}, false);
+    //chassis.turnToHeading(90, 3000, {.maxSpeed = 127}, false);
+    chassis.moveToPoint(0, 24, 4000, {.maxSpeed = 127}, false);
 }
 void runAutonomous(){
     pros::lcd::set_text(1, "Autonomous: no routine selected");
@@ -256,5 +275,5 @@ void runAutonomous(){
     // chassis.moveToPoint(0, 12, 2000, {}, false);
     // chassis.turnToHeading(90, 1500, {}, false);
 
-    
+    CoordinateBased();
 }

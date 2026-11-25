@@ -28,9 +28,6 @@ void runDriver() {
     IsFlipping = false;
 
     pros::Controller controller(pros::E_CONTROLLER_MASTER);
-    constexpr std::uint32_t controllerDisplayPeriodMs = 100;
-    std::uint32_t lastControllerDisplayMs = pros::millis() - controllerDisplayPeriodMs;
-    bool displayX = true;
     pros::lcd::set_text(1, "Mode: driver (arcade)");
 
     switch(StartPoint){
@@ -153,19 +150,7 @@ void runDriver() {
             ToggleMotor.move(0);
         }
 
-        // 每 100 ms 更新一行，每个坐标每 200 ms 刷新一次；单位为英寸。
-        // 轮流写入，避免连续发送手柄屏幕指令；固定宽度覆盖旧数字。
-        const std::uint32_t now = pros::millis();
-        if (now - lastControllerDisplayMs >= controllerDisplayPeriodMs) {
-            const auto pose = chassis.getPose();
-            if (displayX) {
-                controller.print(0, 0, "X:%8.2f in  ", pose.x);
-            } else {
-                controller.print(1, 0, "Y:%8.2f in  ", pose.y);
-            }
-            displayX = !displayX;
-            lastControllerDisplayMs = now;
-        }
+        // 坐标由 initializeRobot() 的后台 screenTask 显示，自动模式也能刷新。
         pros::delay(driverPeriodMs);
     }
     stopRobot();

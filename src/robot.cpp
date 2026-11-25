@@ -36,13 +36,31 @@ lemlib::Drivetrain drivetrain(&leftMotors, &rightMotors, trackWidth,
 // 去年模板的 PID 起点，不代表今年已经调好。
 // 参数顺序：kP, kI, kD, antiWindup, 小误差范围/时间, 大误差范围/时间, slew。
 // 直线误差用英寸，角度误差用度，时间用毫秒。
-lemlib::ControllerSettings linearController(10, 0, 3, 3, 1, 100, 3, 500, 20);
-lemlib::ControllerSettings angularController(2, 0, 10, 3, 1, 100, 3, 500, 0);
+lemlib::ControllerSettings linearController(10, 0, 25, 3, 1, 100, 3, 500, 20);
+lemlib::ControllerSettings angularController(7, 0, 50, 3, 1, 100, 3, 500, 0);
 lemlib::OdomSensors sensors(&vertical, nullptr, &horizontal, nullptr, &imu);
 
 /*
 PID test
 Linear
+2,0,0
+5,0,0
+8,0,0   速度太慢
+12,0,0  开始有震荡
+12,0,20 震荡减小
+10,0,20
+
+Angular
+
+2,0,0 有点慢
+5,0,0 有震荡
+5,0,10 震荡减小
+5,0,25
+8,0,25 大震荡
+7,0,30
+7,0,40
+7,0,50
+
 
 */
 
@@ -83,11 +101,35 @@ void initializeRobot() {
     //IntakeMotorRight.set_brake_mode(pros::E_MOTOR_BRAKE_HOLD);
 
     static pros::Task screenTask([] {
+        pros::Controller controller(pros::E_CONTROLLER_MASTER);
+        std::uint32_t lastControllerDisplayMs = pros::millis() - controllerDisplayPeriodMs;
+        std::uint8_t controllerLine = 0;
         while (true) {
             const auto pose = chassis.getPose();
             pros::lcd::print(2, "X: %.2f", pose.x);
             pros::lcd::print(3, "Y: %.2f", pose.y);
             pros::lcd::print(4, "Heading: %.2f", pose.theta);
+
+            // 后台任务在阻塞式 moveToPoint(..., false) 期间也会运行。
+            // 每 100 ms 只写一行，X / Y / Heading 各每 300 ms 刷新一次。
+            const std::uint32_t now = pros::millis();
+            if (now - lastControllerDisplayMs >= controllerDisplayPeriodMs) {
+                if (controller.is_connected()) {
+                    switch (controllerLine) {
+                        case 0:
+                            controller.print(0, 0, "X:%8.2f in  ", pose.x);
+                            break;
+                        case 1:
+                            controller.print(1, 0, "Y:%8.2f in  ", pose.y);
+                            break;
+                        case 2:
+                            controller.print(2, 0, "H:%8.2f deg ", pose.theta);
+                            break;
+                    }
+                    controllerLine = (controllerLine + 1) % 3;
+                }
+                lastControllerDisplayMs = now;
+            }
             pros::delay(screenPeriodMs);
         }
     });
